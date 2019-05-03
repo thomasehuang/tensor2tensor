@@ -1,3 +1,12 @@
+A version of T2T with bug fixes.
+
+There are example scripts in ```./scripts``` for training and inference. To run, just execute the command:
+```
+CUDA_VISIBLE_DEVICES=0 bash scripts/t2t_train_cifar10.sh
+```
+
+---------------------------------------------------------
+
 # Tensor2Tensor
 
 [![PyPI
