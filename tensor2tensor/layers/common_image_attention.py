@@ -675,7 +675,7 @@ def create_output(decoder_output, rows, cols, targets, hparams):
     [batch, hparams.img_len, hparams.img_len, hparams.num_channels, 256].
     In the special case of predict mode, it is a Tensor of rank 5.
   """
-  del targets  # unused arg
+  # del targets  # unused arg
   decoded_image = postprocess_image(decoder_output, rows, cols, hparams)
   batch = common_layers.shape_list(decoded_image)[0]
   depth = common_layers.shape_list(decoded_image)[-1]
