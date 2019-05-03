@@ -631,9 +631,30 @@ def prepare_decoder(targets, hparams):
 
 def prepare_image(inputs, hparams, name=None):
   """Prepare image."""
-  # TODO(trandustin): This is a legacy function. Remove its usage.
-  del hparams, name  # unused arg
-  return inputs
+  inputs_shape = common_layers.shape_list(inputs)
+  batch = inputs_shape[0]
+  orig_rows = inputs_shape[1]
+  orig_cols = inputs_shape[2]
+  channels = hparams.num_channels
+
+  hidden_size = hparams.hidden_size
+  # TODO(trandustin): Check via modalities.ModalityType.IDENTITY and not str.
+  # The current implementation is to avoid circular imports, modalities ->
+  # discretization -> common_image_attention -> modalities.
+  if "targets" in hparams.bottom:
+    target_modality_name = hparams.bottom["targets"]
+    if not isinstance(target_modality_name, str):
+      target_modality_name = target_modality_name.__name__
+  else:
+    target_modality_name = None
+  if target_modality_name == "identity_bottom":
+    inputs = tf.to_int32(inputs)
+    x = get_channel_embeddings(channels, inputs, hidden_size, name=name)
+  else:
+    x = inputs
+  x = tf.reshape(x, [batch, orig_rows, orig_cols * channels, hidden_size])
+
+  return x
 
 
 def create_output(decoder_output, rows, cols, targets, hparams):
@@ -660,8 +681,9 @@ def create_output(decoder_output, rows, cols, targets, hparams):
   depth = common_layers.shape_list(decoded_image)[-1]
   likelihood = getattr(hparams, "likelihood", DistributionType.CAT)
   if hparams.mode == tf.estimator.ModeKeys.PREDICT:
+    batch, height, width, channels = common_layers.shape_list(targets)
     y = tf.reshape(decoded_image, [batch, -1, 1, 1, depth])
-    output = y[:, :rows, :, :, :]
+    output = y[:, :height, :, :, :]
   elif likelihood == DistributionType.CAT:
     # Unpack the cols dimension of the Categorical.
     channels = hparams.num_channels
