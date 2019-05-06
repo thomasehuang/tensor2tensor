@@ -3846,7 +3846,8 @@ def masked_local_attention_2d(q,
 
     # Remove the padding if introduced.
     output = tf.slice(output, [0, 0, 0, 0, 0],
-                      [-1, -1, v_shape[2], v_shape[3], -1])
+                      # [-1, -1, v_shape[2], v_shape[3], -1])
+                      [-1, v_shape[1], v_shape[2], v_shape[3], v_shape[4]])
     return output
 
 
