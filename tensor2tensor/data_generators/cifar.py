@@ -30,6 +30,7 @@ from tensor2tensor.data_generators import generator_utils
 from tensor2tensor.data_generators import image_utils
 from tensor2tensor.data_generators import mnist
 from tensor2tensor.data_generators import problem
+from tensor2tensor.data_generators import text_encoder
 from tensor2tensor.layers import modalities
 from tensor2tensor.utils import metrics
 from tensor2tensor.utils import registry
@@ -269,6 +270,13 @@ class Img2imgCifar10(ImageCifar10):
     p.batch_size_multiplier = 256
     p.input_space_id = 1
     p.target_space_id = 1
+
+  def feature_encoders(self, data_dir):
+    del data_dir
+    return {
+        "inputs": text_encoder.ImageEncoder(channels=self.num_channels),
+        "targets": text_encoder.ImageEncoder(channels=self.num_channels)
+    }
 
 
 @registry.register_problem
