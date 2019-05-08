@@ -188,7 +188,8 @@ def image_transformer_base():
   hparams.optimizer_adam_beta1 = 0.9
   hparams.optimizer_adam_beta2 = 0.98
   hparams.label_smoothing = 0.0
-  hparams.bottom["targets"] = modalities.image_channel_embeddings_bottom
+  # hparams.bottom["targets"] = modalities.image_channel_embeddings_bottom
+  hparams.bottom["targets"] = modalities.identity_bottom
   hparams.top["targets"] = modalities.identity_top
   hparams.norm_type = "layer"
   hparams.layer_prepostprocess_dropout = 0.0
